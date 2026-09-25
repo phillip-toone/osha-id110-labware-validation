@@ -1,6 +1,34 @@
+# 2026-09-25 Update --- Configuration Investigation and DEV Changes
+
+**Status:** Run 485926 remains the completed baseline at **Needs Reviewer**. A new regression run is the next operational step.
+
+On 2026-09-25 the QCSM calculation path was investigated before recycling the reference dataset. The full findings are in `docs/findings/2026-09-25-configuration-investigation.md`.
+
+Confirmed investigation results:
+
+- `1280 F/T` calls `CALC_QC_CONC` with `found -> 1280 (Final)`, `theory -> INGREDIENTS Concentration ENTRY`, and `theoryElement -> INGREDIENTS Concentration ATTRIBUTE_1`.
+- Established GC recovery uses the same `CALC_QC_CONC` pattern.
+- `CALC_GC_FINAL` explicitly retains QCSM/RLSM Final values as mass in `UG` rather than applying airborne conversion.
+- Historical environment `OLD_DEV_050526` contained analogous QCSM branching in `1280 (Final)`; current DEV had lost that branch.
+- No analogous historical `1460 (Final)` branch was found in `OLD_DEV_050526`.
+
+DEV changes made and **pending validation**:
+
+1. ISE Air Volume now calls shared `CALC_AIR_VOL` (also used by GC and IC).
+2. Historical QCSM handling was restored to `1280 (Final)`.
+3. Analogous QCSM handling was newly added to `1460 (Final)`.
+
+For both Final components, QCSMs should now retain fluoride mass in `UG`; field samples retain their existing reportable calculations (`MG_M3` for 1280 and `PPM` for 1460).
+
+**Open caution:** the last explicitly confirmed state of `1460 F/T` was blank source code with no calculation variables. Its current configuration must be rechecked and its behavior demonstrated before the 1460 recovery issue is considered resolved.
+
+**Next action:** recycle `HD-2026-12-02` with a new request number, include both QCSM035 and QCSM036, and run the same historical dataset as a regression test. Preserve unexpected behavior and compare directly with run 485926.
+
+------------------------------------------------------------------------
+
 # OSHA ID-110 LabWare Validation --- Comprehensive Handoff
 
-**Current as of:** September 24, 2026, approximately 3:46 PM MDT\
+**Current as of:** September 25, 2026\
 **LabWare environment:** OSHA_LIMS_DEV / LabWare 8\
 **Primary analyst/user:** PTOONE\
 **Current batch:** `OSHA_ID-110-260924-1`\

@@ -49,3 +49,30 @@ Before modifying calculations/components:
 4.  make controlled changes;
 5.  recycle `HD-2026-12-02` with a new request number;
 6.  compare against the fixed historical values.
+
+## Configuration comparison queries
+
+Useful read-only queries for comparing calculation configuration across
+environments:
+
+``` sql
+SELECT
+    ANALYSIS, COMPONENT, VERSION, DESCRIPTION, SOURCE_CODE
+FROM CALCULATION
+WHERE ANALYSIS = 'ISE'
+ORDER BY COMPONENT, VERSION;
+
+SELECT *
+FROM CALC_VARIABLES
+WHERE ANALYSIS = 'ISE'
+ORDER BY COMPONENT, VERSION, NAME;
+
+SELECT *
+FROM ANALYSIS_VARIATION
+WHERE ANALYSIS = 'ISE'
+ORDER BY ORDER_NUMBER, VARIATION;
+```
+
+On 2026-09-25, source-code comparison with `OLD_DEV_050526` found the
+historical QCSM branch in `1280 (Final)` missing from current DEV. Parent
+ID-110 Analysis Variation records showed no substantive differences.

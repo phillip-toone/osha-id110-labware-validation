@@ -53,3 +53,34 @@ results.
 integration.
 
 Ready-for-Review validation enforces required analytical results.
+
+## 2026-09-25 configuration investigation
+
+`F/T` is a unitless Found/Theoretical recovery ratio. `CALC_QC_CONC`
+uses the configured Final result as `found` and the matching INGREDIENTS
+Concentration as `theory`, converting found into compatible theory units
+before division.
+
+Confirmed `1280 F/T` mappings:
+
+- `found` -> `ISE : 1280 (Final)` / `ENTRY`, scope `CT`, trigger `1`
+- `theory` -> `INGREDIENTS : Concentration` / `ENTRY`, scope `AR`
+- `theoryElement` -> `INGREDIENTS : Concentration` / `ATTRIBUTE_1`, scope `AR`
+
+Historical environment `OLD_DEV_050526` contained QCSM-specific branching
+in `1280 (Final)`: QCSMs retained `fluorideMass` in `UG`, while other
+samples used `fluorideMass / airVolume`. This branch was restored to
+current DEV on 2026-09-25 and is pending regression validation.
+
+Analogous QCSM branching was newly added to `1460 (Final)` on 2026-09-25:
+QCSMs retain `fluorideMass` in `UG`; non-QCSM samples retain the existing
+PPM calculation. This was not found in `OLD_DEV_050526` and is a new DEV
+change pending validation.
+
+ISE Air Volume was also changed to call shared `CALC_AIR_VOL`, used by GC
+and IC. For active samples the shared routine retains the existing
+flow-rate-times-time behavior; regression validation is required.
+
+The last confirmed state of `1460 F/T` remains blank source code with no
+calculation variables. Recheck its current configuration and demonstrate
+recovery behavior before considering 1460 QCSM recovery resolved.
