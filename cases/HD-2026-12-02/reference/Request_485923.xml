@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<HealthSampling xmlns="http://gov.dol.ois.connector.schema/HealthSampling" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://gov.dol.ois.connector.schema/HealthSampling LabRequest.xsd">
+    <number>485923</number>
+    <labId>2</labId>
+    <reportingId>0522300</reportingId>
+    <inspectionNumber>1860678</inspectionNumber>
+    <samplingDate>2026-01-12</samplingDate>
+    <type>Employee</type>
+    <establishment>Pursuit Aerospace Cleveland</establishment>
+    <naics>336412</naics>
+    <shipment>
+        <method>UPS</method>
+        <date>2026-01-13-06:00</date>
+        <trackingNumber>1ZX106W70199373399</trackingNumber>
+    </shipment>
+    <employeeJob>
+        <title>Heat Treat</title>
+    </employeeJob>
+    <performedBy>
+        <cshoId>H9560</cshoId>
+        <firstName>Ashlyn</firstName>
+        <lastName>Schmitt</lastName>
+    </performedBy>
+    <sample>
+        <sampleSubmissionName>SAMPLE 1</sampleSubmissionName>
+        <sampleType>Personal</sampleType>
+        <media>
+            <name>MCEF, 37-mm, BUP, Na2CO3; SKC 225-9001</name>
+        </media>
+        <labExposureType>
+            <name>TWA-8</name>
+        </labExposureType>
+        <labExposureType>
+            <name>TWA</name>
+        </labExposureType>
+        <totalTime>52</totalTime>
+        <flowRate>
+            <value>1.52</value>
+            <unit>liter/minute</unit>
+        </flowRate>
+        <volume>
+            <value>79.04</value>
+            <unit>liter</unit>
+        </volume>
+        <analyzeFor>
+            <substanceCode>1460</substanceCode>
+            <substanceName>Hydrogen Fluoride (as F)</substanceName>
+        </analyzeFor>
+    </sample>
+    <sample>
+        <sampleSubmissionName>SAMPLE 2</sampleSubmissionName>
+        <sampleType>Personal</sampleType>
+        <media>
+            <name>MCEF, 37-mm, BUP, Na2CO3; SKC 225-9001</name>
+        </media>
+        <labExposureType>
+            <name>TWA</name>
+        </labExposureType>
+        <labExposureType>
+            <name>TWA-8</name>
+        </labExposureType>
+        <totalTime>55</totalTime>
+        <flowRate>
+            <value>1.52</value>
+            <unit>liter/minute</unit>
+        </flowRate>
+        <volume>
+            <value>83.6</value>
+            <unit>liter</unit>
+        </volume>
+        <analyzeFor>
+            <substanceCode>1460</substanceCode>
+            <substanceName>Hydrogen Fluoride (as F)</substanceName>
+        </analyzeFor>
+    </sample>
+    <sample>
+        <sampleSubmissionName>SAMPLE 3</sampleSubmissionName>
+        <sampleType>Personal</sampleType>
+        <media>
+            <name>MCEF, 37-mm, BUP, Na2CO3; SKC 225-9001</name>
+        </media>
+        <labExposureType>
+            <name>TWA</name>
+        </labExposureType>
+        <labExposureType>
+            <name>TWA-8</name>
+        </labExposureType>
+        <totalTime>58</totalTime>
+        <flowRate>
+            <value>1.52</value>
+            <unit>liter/minute</unit>
+        </flowRate>
+        <volume>
+            <value>88.16</value>
+            <unit>liter</unit>
+        </volume>
+        <analyzeFor>
+            <substanceCode>1460</substanceCode>
+            <substanceName>Hydrogen Fluoride (as F)</substanceName>
+        </analyzeFor>
+    </sample>
+    <sample>
+        <sampleSubmissionName>SAMPLE 4</sampleSubmissionName>
+        <sampleType>Personal</sampleType>
+        <media>
+            <name>MCEF, 37-mm, BUP, Na2CO3; SKC 225-9001</name>
+        </media>
+        <labExposureType>
+            <name>TWA-8</name>
+        </labExposureType>
+        <labExposureType>
+            <name>TWA</name>
+        </labExposureType>
+        <totalTime>65</totalTime>
+        <flowRate>
+            <value>1.52</value>
+            <unit>liter/minute</unit>
+        </flowRate>
+        <volume>
+            <value>98.8</value>
+            <unit>liter</unit>
+        </volume>
+        <analyzeFor>
+            <substanceCode>1460</substanceCode>
+            <substanceName>Hydrogen Fluoride (as F)</substanceName>
+        </analyzeFor>
+    </sample>
+    <sample>
+        <sampleSubmissionName>SAMPLE 5</sampleSubmissionName>
+        <sampleType>Personal</sampleType>
+        <media>
+            <name>MCEF, 37-mm, BUP, Na2CO3; SKC 225-9001</name>
+        </media>
+        <labExposureType>
+            <name>TWA-8</name>
+        </labExposureType>
+        <labExposureType>
+            <name>TWA</name>
+        </labExposureType>
+        <totalTime>60</totalTime>
+        <flowRate>
+            <value>1.52</value>
+            <unit>liter/minute</unit>
+        </flowRate>
+        <volume>
+            <value>91.2</value>
+            <unit>liter</unit>
+        </volume>
+        <analyzeFor>
+            <substanceCode>1460</substanceCode>
+            <substanceName>Hydrogen Fluoride (as F)</substanceName>
+        </analyzeFor>
+    </sample>
+    <sample>
+        <sampleSubmissionName>SAMPLE 6</sampleSubmissionName>
+        <sampleType>Personal</sampleType>
+        <media>
+            <name>MCEF, 37-mm, BUP, Na2CO3; SKC 225-9001</name>
+        </media>
+        <labExposureType>
+            <name>TWA</name>
+        </labExposureType>
+        <labExposureType>
+            <name>TWA-8</name>
+        </labExposureType>
+        <totalTime>58</totalTime>
+        <flowRate>
+            <value>1.52</value>
+            <unit>liter/minute</unit>
+        </flowRate>
+        <volume>
+            <value>88.16</value>
+            <unit>liter</unit>
+        </volume>
+        <analyzeFor>
+            <substanceCode>1460</substanceCode>
+            <substanceName>Hydrogen Fluoride (as F)</substanceName>
+        </analyzeFor>
+    </sample>
+    <sample>
+        <sampleSubmissionName>SAMPLE 7</sampleSubmissionName>
+        <sampleType>Personal</sampleType>
+        <media>
+            <name>MCEF, 37-mm, BUP, Na2CO3; SKC 225-9001</name>
+        </media>
+        <labExposureType>
+            <name>TWA</name>
+        </labExposureType>
+        <labExposureType>
+            <name>TWA-8</name>
+        </labExposureType>
+        <totalTime>65</totalTime>
+        <flowRate>
+            <value>1.52</value>
+            <unit>liter/minute</unit>
+        </flowRate>
+        <volume>
+            <value>98.8</value>
+            <unit>liter</unit>
+        </volume>
+        <analyzeFor>
+            <substanceCode>1460</substanceCode>
+            <substanceName>Hydrogen Fluoride (as F)</substanceName>
+        </analyzeFor>
+    </sample>
+    <blankSample>
+        <sampleSubmissionName>BLANK</sampleSubmissionName>
+        <media>
+            <name>MCEF, 37-mm, BUP, Na2CO3; SKC 225-9001</name>
+        </media>
+    </blankSample>
+    <exposureInformation>
+        <numberEmployeesExposed>5</numberEmployeesExposed>
+        <exposureDuration>29 Year(s)</exposureDuration>
+        <exposureFrequency>8h/d</exposureFrequency>
+    </exposureInformation>
+    <equipmentSpecifications>
+        <pumpManufacturer>GilAir Plus FAB1762</pumpManufacturer>
+        <calibrationManufacturer>Drycal</calibrationManufacturer>
+    </equipmentSpecifications>
+    <preCalibration>
+        <locationTempAlt>CAO</locationTempAlt>
+        <initialsDateTime>AS/1-9-26/9:43 am</initialsDateTime>
+        <flowRate>
+            <readingNumber>1</readingNumber>
+            <readingValue>1.4992</readingValue>
+            <readingUnit>liter/minute</readingUnit>
+        </flowRate>
+        <flowRate>
+            <readingNumber>2</readingNumber>
+            <readingValue>1.5003</readingValue>
+            <readingUnit>liter/minute</readingUnit>
+        </flowRate>
+        <flowRate>
+            <readingNumber>3</readingNumber>
+            <readingValue>1.4974</readingValue>
+            <readingUnit>liter/minute</readingUnit>
+        </flowRate>
+        <flowRate>
+            <readingNumber>Average</readingNumber>
+            <readingValue>1.5</readingValue>
+            <readingUnit>liter/minute</readingUnit>
+        </flowRate>
+    </preCalibration>
+    <postCalibration>
+        <locationTempAlt>CAO</locationTempAlt>
+        <initialsDateTime>AS/1-13-26/3:39pm</initialsDateTime>
+        <flowRate>
+            <readingNumber>1</readingNumber>
+            <readingValue>1.5154</readingValue>
+            <readingUnit>liter/minute</readingUnit>
+        </flowRate>
+        <flowRate>
+            <readingNumber>2</readingNumber>
+            <readingValue>1.5193</readingValue>
+            <readingUnit>liter/minute</readingUnit>
+        </flowRate>
+        <flowRate>
+            <readingNumber>3</readingNumber>
+            <readingValue>1.5243</readingValue>
+            <readingUnit>liter/minute</readingUnit>
+        </flowRate>
+        <flowRate>
+            <readingNumber>Average</readingNumber>
+            <readingValue>1.52</readingValue>
+            <readingUnit>liter/minute</readingUnit>
+        </flowRate>
+    </postCalibration>
+</HealthSampling>
