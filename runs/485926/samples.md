@@ -1,73 +1,42 @@
-# Run 485926 — Samples and QCSMs
+# Run 485926 --- Sample Results
 
-## Field-sample mapping
+    LabWare Text ID           Historical     Air Volume L
+  --------- ----------------- ------------ --------------
+      65719 485926-SAMPLE 1   F58027                79.04
+      65720 485926-SAMPLE 2   F58028                 83.6
+      65721 485926-SAMPLE 3   F58029                88.16
+      65722 485926-SAMPLE 4   F58030                 98.8
+      65723 485926-SAMPLE 5   F58031                 91.2
+      65724 485926-SAMPLE 6   F58032                88.16
+      65725 485926-SAMPLE 7   F58033                 98.8
 
-The XML request produced seven Personal LabWare samples. Barcode entry confirmed the mapping:
+## Verified 1460 calculations
 
-| LabWare sample | Text ID | XML air volume (L) |
-|---:|---|---:|
-| `65719` | `485926-SAMPLE 1` | 79.04 |
-| `65720` | `485926-SAMPLE 2` | 83.6 |
-| `65721` | `485926-SAMPLE 3` | 88.16 |
-| `65722` | `485926-SAMPLE 4` | 98.8 |
-| `65723` | `485926-SAMPLE 5` | 91.2 |
-| `65724` | `485926-SAMPLE 6` | 88.16 |
-| `65725` | `485926-SAMPLE 7` | 98.8 |
+    Sample   Mass µg   LabWare 1460 Final ppm
+  -------- --------- ------------------------
+     65720      5.90                   0.0908
+     65721      5.85                   0.0854
+     65722      6.00                   0.0782
+     65723      6.20                   0.0875
+     65724      6.05                   0.0883
+     65725      5.65                   0.0736
 
-All seven were scanned into the batch as `PERSONAL` samples under `ISE / OSHA_ID-110`.
+## Verified 1280 calculations
 
-## QCSMs included in the batch
+    Sample   Mass µg   LabWare 1280 Final mg/m3
+  -------- --------- --------------------------
+     65720      8.05                     0.0963
+     65721      9.00                     0.1021
+     65722      7.90                     0.0800
+     65723      8.25                     0.0905
+     65724      7.90                     0.0896
+     65725      8.15                     0.0825
 
-The batch-creation workflow prompted separately for Quality Control Samples. The following verified `QCSM036-0001` samples were scanned:
+Entering the required 1280 results caused the active field tests to
+transition to Complete.
 
-| Sample | QCSM | Spike | Calculated F |
-|---:|---|---:|---:|
-| `65241` | `QCSM036-0001-001` | 10 µL | 90.26247617 µg |
-| `65242` | `QCSM036-0001-002` | 20 µL | 180.52495343 µg |
-| `65243` | `QCSM036-0001-003` | 40 µL | 361.04990687 µg |
-| `65244` | `QCSM036-0001-004` | 0 µL | 0.0 µg |
+## 65719
 
-These QCSMs use:
-
-- QCSM spiking standard: `LAB_SOL00265-0006-001`
-- Physical medium: `FES0002281` Na2CO3-impregnated backup-pad media
-- Media quantity: 1 Each / concentration N/A
-
-All four QCSM samples were Complete and activated/opened before batch creation.
-
-## Batch positions
-
-| Position | Sample | Role |
-|---:|---:|---|
-| 1 | `65241` | QCSM036 10 µL |
-| 2 | `65242` | QCSM036 20 µL |
-| 3 | `65243` | QCSM036 40 µL |
-| 4 | `65244` | QCSM036 blank |
-| 5 | `65719` | Field SAMPLE 1 |
-| 6 | `65720` | Field SAMPLE 2 |
-| 7 | `65721` | Field SAMPLE 3 |
-| 8 | `65722` | Field SAMPLE 4 |
-| 9 | `65723` | Field SAMPLE 5 |
-| 10 | `65724` | Field SAMPLE 6 |
-| 11 | `65725` | Field SAMPLE 7 |
-
-No unexpected samples were present in positions 1–11. Positions after 11 were empty when checked.
-
-## Related QCSM035 set prepared during validation
-
-A corrected 1280 QCSM set was also prepared and activated, but it is **not currently in this batch**:
-
-| Sample | QCSM | Spike | Calculated F |
-|---:|---|---:|---:|
-| `65715` | `QCSM035-0005-001` | 10 µL | 90.26247617 µg |
-| `65716` | `QCSM035-0005-002` | 20 µL | 180.52495343 µg |
-| `65717` | `QCSM035-0005-003` | 40 µL | 361.04990687 µg |
-| `65718` | `QCSM035-0005-004` | 0 µL | 0.0 µg |
-
-Do not add these retroactively merely because the batch exposes both 1280 and 1460-related result fields. Continue the configured workflow and observe what LabWare does.
-
-## Analysis-assignment observation
-
-The request XML explicitly asks for `1460 — Hydrogen Fluoride (as F)`. However, after batch creation the visible sample tree showed `1280 (Final)` beneath the ISE analysis for the imported field samples.
-
-This remains an observation under validation, not yet a confirmed defect. No manual correction has been made.
+Test `73870` was cancelled during interactive validation. Audit history
+recorded `CancelTest` / `Calculation Update`. Treat as a run artifact
+unless independently reproduced.

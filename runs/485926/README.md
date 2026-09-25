@@ -1,64 +1,56 @@
-# LabWare Validation Run 485926
+# Validation Run 485926
 
-**Reference case:** [`HD-2026-12-02`](../../cases/HD-2026-12-02/)  
-**Current LabWare batch:** `OSHA_ID-110-260924-1`  
-**Environment:** OSHA_LIMS_DEV / LabWare 8  
-**Status:** In progress
+Reference case: `HD-2026-12-02`\
+Batch: `OSHA_ID-110-260924-1`\
+Intentional endpoint: **Needs Reviewer**
 
-## Purpose
+This is the first thoroughly documented recycled execution of the known
+historical dataset. Future attempts should reuse the same case data with
+a new incremented request number.
 
-This is the first documented LabWare execution against historical reference case `HD-2026-12-02`.
+## What this run demonstrated
 
-The run uses a new XML request and newly generated LabWare field samples while comparing LabWare behavior and results with the historical OSHA ID-110 reference case.
+-   Batch equipment, reagent, buffer, ICV, and STD A-D inventory
+    traceability can be assigned.
+-   Manual 1280 and 1460 result entry works.
+-   1280 Mass and Final calculations reproduced the historical reference
+    values.
+-   1460 Mass calculations reproduced the historical reference values.
+-   1460 Final calculates for field samples with valid Air Volume.
+-   LabWare correctly required 1280 results before allowing Ready for
+    Review, consistent with the internal work instruction requiring
+    MCEF/1280 even when only HF is requested.
+-   The batch successfully reached **Needs Reviewer**.
+    Reviewer/authorization was intentionally not tested because that
+    generic workflow has already been validated elsewhere.
 
-A future rerun of the same historical case should receive its own directory under `runs/` and point back to the same case rather than duplicating the historical PDFs.
+## Findings requiring investigation
 
-## Input request
+1.  `1460 F/T` appears incompletely implemented: unlike `1280 F/T`, it
+    has no calculation source code and no calculation variables.
+2.  1460 QCSMs calculate the expected Mass but invoke the
+    air-volume-dependent `1460 (Final)` calculation and generate
+    divide-by-zero errors.
+3.  `HF (1460) QCSM Precision` cannot calculate because LabWare reports
+    no QCSM recovery results.
+4.  `Batch -> Calculate` generated roughly 120 repeated
+    component-replacement prompts, repeated divide-by-zero errors, and
+    cleared some previously entered batch traceability values.
+5.  A complete ID-110 run should contain both 1280 (`QCSM035`) and 1460
+    (`QCSM036`) QCSM sets. Run 485926 contained only QCSM036.
 
-Request number: `485926`
+## Run artifact
 
-Important XML metadata:
+Sample `65719` / `485926-SAMPLE 1` had its ISE test cancelled during
+interactive testing. Audit history recorded `CancelTest` with reason
+`Calculation Update`. The analyst believes this resulted from an
+accidental UI action while creating screenshots. Do not treat it as a
+confirmed LabWare defect unless independently reproduced.
 
-- Reporting ID: `0522300`
-- Inspection number: `1860678`
-- Sampling date: `2026-01-12`
-- Establishment: Pursuit Aerospace Cleveland
-- Seven Personal samples plus one separately represented blank
-- Requested analyte on the seven Personal samples: `1460 — Hydrogen Fluoride (as F)`
+## Next iteration
 
-The XML itself should be stored under `input/` only if repository policy permits retaining that source material in Git.
-
-## Current run state
-
-The seven field samples were imported and batch-created through **Create Batch by Barcode Scan**.
-
-Four verified `QCSM036-0001` samples were added when LabWare prompted for QC samples.
-
-Batch `OSHA_ID-110-260924-1` contains 11 samples total:
-
-- 4 QCSM036 samples
-- 7 request-485926 field samples
-
-Batch-level equipment, reagent, buffer, ICV, and calibration-standard traceability has been entered.
-
-The batch remains open and incomplete.
-
-## Important observation under investigation
-
-Although the XML explicitly requests `1460`, expanding the imported field samples in the batch tree currently shows `1280 (Final)` beneath the ISE analysis. No manual correction has been made.
-
-This is intentionally being carried forward through the configured workflow to determine whether later OSHA ID-110 logic generates/derives the 1460 result or whether the behavior represents a configuration defect.
-
-Do not manually add analyses solely to make the display match expectations.
-
-## Immediate next step
-
-Open the batch **Run** menu and continue the configured OSHA ID-110 analytical workflow one controlled step at a time.
-
-Do not authorize batch Results yet and do not manually enter QCSM Precision values unless the configured workflow explicitly requires it.
-
-See:
-
-- [`samples.md`](samples.md) for sample/QCSM mapping
-- [`batch.md`](batch.md) for exact batch traceability
-- [`../../docs/handoff/CURRENT.md`](../../docs/handoff/CURRENT.md) for the comprehensive project handoff
+Before recycling this case again, investigate `CALC_QC_CONC`, fully map
+the working 1280 QCSM recovery implementation, repair/complete the
+analogous 1460 recovery path, ensure both QCSM sets are included, and
+investigate `Batch -> Calculate`. Then increment the request number and
+create a new `runs/<request-number>/` record.
