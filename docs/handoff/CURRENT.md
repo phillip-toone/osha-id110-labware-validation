@@ -1,3 +1,58 @@
+# 2026-10-05 Update — 1460 F/T Inputs Configured; Regression Run Is Next
+
+**Status:** The missing calculation-variable inputs for `1460 F/T` have now been configured in DEV. This configuration has **not yet been regression-tested**. A fresh regression run is the next operational step.
+
+On 2026-10-05, the `1460 F/T` configuration was compared directly with the established `1280 F/T` configuration. `1460 F/T` already contained the expected calculation source:
+
+```text
+'THEY 01-Mar-2023
+GOSUB CALC_QC_CONC
+RETURN qcRecVal
+```
+
+However, unlike `1280 F/T`, it had no calculation-variable inputs. The following three Component variables were added to `1460 F/T` in DEV:
+
+| Variable | Component source | Trigger | Scope | Value | Output |
+| --- | --- | --- | --- | --- | --- |
+| `found` | `ISE : 1460 (Final)` | Calculate when any rep entered | All Results For Current Test | `ENTRY` | Array |
+| `theory` | `INGREDIENTS : Concentration` | Always Calculate | All Results For All Tests | `ENTRY` | Array |
+| `theoryElement` | `INGREDIENTS : Concentration` | Always Calculate | All Results For All Tests | `ATTRIBUTE_1` | Array |
+
+This now structurally parallels the established `1280 F/T` recovery configuration, with `found` appropriately referencing `1460 (Final)` rather than `1280 (Final)`.
+
+**Important:** This establishes that the configuration is structurally consistent with the known `1280 F/T` pattern. It does **not** yet establish that 1460 QCSM recovery calculates correctly at runtime. Do not consider the HF QCSM recovery issue resolved until it has been demonstrated in the regression run.
+
+A LabWare UI behavior was also identified while making this change: when adding a calculation variable of type **Component**, the **Which Analysis?** dialog may initially be filtered to `ISE`. To select `INGREDIENTS`, clear the pre-populated `ISE` value so the Name field is blank, then open the analysis browser and select `INGREDIENTS`, followed by `Concentration`. Do **not** use the **Batch Sample** variable type merely to reach `INGREDIENTS`; that creates a different variable type with different properties.
+
+Full details of this change are recorded in:
+
+`docs/findings/2026-10-05-1460-ft-configuration.md`
+
+## Immediate next action
+
+Create a **fresh regression run** based on reference case `HD-2026-12-02`, using a new request number and including both QCSM sets:
+
+- `QCSM035` — particulate fluoride / 1280
+- `QCSM036` — HF / 1460
+
+Use the historical/reference analytical inputs and compare the new results with the reference evidence and baseline run `485926`.
+
+The regression run should specifically verify the DEV changes made on 2026-09-25 and 2026-10-05, including:
+
+1. ISE Air Volume remains correct using shared `CALC_AIR_VOL`.
+2. 1280 QCSM Final retains fluoride mass in `UG`.
+3. 1460 QCSM Final retains fluoride mass in `UG` without the previous divide-by-zero path.
+4. Non-QCSM 1280 Final remains `MG_M3` and reproduces expected results.
+5. Non-QCSM 1460 Final remains `PPM` and reproduces expected results.
+6. `1280 F/T` QCSM recovery calculates correctly.
+7. **`1460 F/T` QCSM recovery calculates correctly using the newly configured inputs.**
+8. Both 1280 and 1460 QCSM precision results populate correctly.
+9. The batch can continue through the review/reviewer workflow.
+
+The OTSS ISE Analysis Demo remains scheduled for **Wednesday, 2026-10-07, 10:00–11:00 AM Mountain Time**. The implementation is **not yet finished or fully validated**. Between now and the demo, prioritize establishing a working and scientifically defensible end-to-end path. Any remaining unresolved items should be identified accurately rather than presenting the implementation as fully validated.
+
+---
+
 # 2026-09-25 Update --- Configuration Investigation and DEV Changes
 
 **Status:** Run 485926 remains the completed baseline at **Needs Reviewer**. A new regression run is the next operational step.
