@@ -1,3 +1,112 @@
+# 2026-10-06 Update — QCSM Recovery/Precision Defects Identified and Corrected; 485928 Is Next
+
+**Status:** Request `485927` is being closed as a diagnostic/configuration-discovery run. It exposed two remaining OSHA ID-110 QCSM configuration defects. The configuration corrections have been implemented and verified at the configuration level, but they have **not yet been validated by a fresh runtime regression**. Because LabWare samples/tests remain linked to the analysis version that existed when they were created, `485927` is not suitable for validating the corrected analysis version. The next validation run will therefore be a fresh request, `485928`, based on `HD-2026-12-02`.
+
+## What 485927 established
+
+Request `485927` successfully exercised the current analyst workflow far enough to expose the remaining QCSM recovery and batch-precision problems. The run should be preserved as diagnostic evidence rather than recalculated into a post-fix validation run.
+
+For controlled QCSM `65977` (`QCSM036-0003-001`), pre-change results demonstrated the failure clearly:
+
+| Path | Final | Theoretical | Expected F/T | Observed pre-change F/T |
+| --- | ---: | ---: | ---: | ---: |
+| 1280 | 96.0 UG | 90.262476717 UG | ~1.063565 | 96.0 NONE |
+| 1460 | 88.0 UG | 90.262476717 UG | ~0.974934 | 0 NONE |
+
+The Concentration -> Mass -> `(Final)` calculations were not identified as the cause. The defects were downstream configuration mismatches affecting recovery lookup and batch precision selection.
+
+## Confirmed defect 1 — QCSM theoretical target did not match F/T aliases
+
+`CALC_QC_CONC` requires the recovery component's `COMPONENT.ALIAS_NAME` to match the theoretical `INGREDIENTS : Concentration` result's `RESULT.ATTRIBUTE_1`.
+
+Pre-change configuration/data showed:
+
+```text
+1280 F/T.ALIAS_NAME = Fluoride (F)
+1460 F/T.ALIAS_NAME = NULL
+QCSM theoretical Concentration.ATTRIBUTE_1 = Sodium Fluoride
+```
+
+Neither F/T component could therefore select the valid theoretical denominator.
+
+Investigation of `CALC_INGRED_CONC`, known-good F/T configurations, and `X_QCSM_TARGET` established the supported correction. The following changes were implemented:
+
+```text
+LAB_SOL00265.X_QCSM_TARGET = Fluoride (F)
+1460 F/T.ALIAS_NAME        = Fluoride (F)
+```
+
+`1280 F/T` already had `ALIAS_NAME = Fluoride (F)` and required no alias change.
+
+No change was made to shared `CALC_QC_CONC`.
+
+**Implementation/audit note:** `LAB_SOL00265.X_QCSM_TARGET` was updated directly by SQL because the field could not be located in the available Stock GUI. The update changed the target value but did not update `STOCK.CHANGED_BY` or `STOCK.CHANGED_ON`; those fields remained `PTOONE` / `07/14/2026 06:49:08 AM`. Preserve this fact in the validation/change record.
+
+## Confirmed defect 2 — ID-110 batch precision wrappers retained copied As/Cd targets
+
+The fluoride-named OSHA ID-110 batch precision components still contained target strings copied from OSHA_5003:
+
+```text
+F (1280) QCSM Precision  -> targetElement = "As F/T"
+HF (1460) QCSM Precision -> targetElement = "Cd F/T"
+```
+
+This directly explains the observed message:
+
+```text
+No QCSM results have been entered. Recovery Precision cannot be calculated.
+```
+
+The wrappers were corrected to:
+
+```text
+F (1280) QCSM Precision:
+    targetElement = "1280 F/T"
+    GOSUB CALC_BATCH_QC_REC_PRECISION
+
+HF (1460) QCSM Precision:
+    targetElement = "1460 F/T"
+    GOSUB CALC_BATCH_QC_REC_PRECISION
+```
+
+No change was made to shared `CALC_BATCH_QC_REC_PRECISION`.
+
+## Run disposition
+
+Use the following interpretation going forward:
+
+| Request | Role | Disposition |
+| --- | --- | --- |
+| `485926` | Earlier baseline validation | Preserve as baseline evidence |
+| `485927` | Diagnostic regression/configuration-discovery run | Preserve as pre-fix diagnostic evidence; do not use to validate the corrected analysis version |
+| `485928` | Fresh post-fix regression | **Next validation run** |
+
+The reason for starting fresh is LabWare analysis versioning: samples/tests created before these configuration changes remain associated with the prior analysis version. Recalculating `485927` would therefore not provide a clean validation of the corrected configuration.
+
+## Immediate next action — clean 485928 regression
+
+Create `Request_485928.xml` from the same `HD-2026-12-02` reference input, changing only the request number as appropriate for the controlled regression. Import and receive fresh samples after the corrected analysis configuration is in place.
+
+The clean regression should establish, at minimum:
+
+1. Newly generated QCSM theoretical `INGREDIENTS : Concentration` results use `ATTRIBUTE_1 = Fluoride (F)` while preserving the expected theoretical amounts.
+2. Nonzero QCSM `1280 F/T` and `1460 F/T` calculate as Final / Theoretical after unit conversion, with units `NONE`.
+3. At least two nonzero QCSMs reproduce expected recovery ratios.
+4. The zero-spike QCSM follows the intended zero-theory behavior without divide-by-zero failure.
+5. `F (1280) QCSM Precision` selects `1280 F/T` results and calculates the expected recovery range.
+6. `HF (1460) QCSM Precision` selects `1460 F/T` results and calculates the expected recovery range.
+7. Field-sample Air Volume, 1280 Final, and 1460 Final continue to reproduce the expected/reference results.
+8. Batch review/reviewer workflow remains functional.
+9. Determine the appropriate QCSM035/QCSM036 coverage through the normal configured workflow; do not force an abnormal batch composition merely to satisfy a checklist.
+
+A separate possible concern remains in `CALC_BATCH_QC_REC_PRECISION`: the expression `UBound(valArr,1) < UBound(valArr,2)` appears suspicious as a completeness check. It was **not** demonstrated to cause the current ID-110 failures and should remain a separate investigation unless fresh runtime evidence makes it relevant.
+
+Full technical findings are recorded in:
+
+`docs/findings/2026-10-06-qc-recovery-and-precision-investigation.md`
+
+---
+
 # 2026-10-05 Update — 1460 F/T Inputs Configured; Regression Run Is Next
 
 **Status:** The missing calculation-variable inputs for `1460 F/T` have now been configured in DEV. This configuration has **not yet been regression-tested**. A fresh regression run is the next operational step.
