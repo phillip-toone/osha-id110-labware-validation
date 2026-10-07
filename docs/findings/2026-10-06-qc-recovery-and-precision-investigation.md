@@ -245,3 +245,33 @@ Investigated OSHA ID-110 QCSM recovery through shared `CALC_QC_CONC` and the dow
 - Post-change batch precision results after all required individual recoveries exist.
 - Whether the suspicious `UBound(valArr,1) < UBound(valArr,2)` completeness check is defective under LabWare runtime array semantics.
 - Overall validation coverage decision regarding QCSM035 versus the current QCSM036-only batch.
+
+## 12. 2026-10-07 runtime follow-up — target fix proven; additional 1460 `found` mismatch identified
+
+Fresh request `485928` supplied the first clean runtime evidence after the October 6 target/alias corrections. Newly created QCSMs generated theoretical `INGREDIENTS : Concentration = 90.262476717 UG` with `ATTRIBUTE_1 = Fluoride (F)` and unit category `MASS`, confirming that `LAB_SOL00265.X_QCSM_TARGET = Fluoride (F)` now propagates correctly into fresh QCSM results.
+
+For QCSM035 sample `66052`, historical 1280 source measurements produced `1280 Mass = 96.0 UG`, `1280 (Final) = 96.0 UG`, and `1280 F/T = 1.0635648776` (formatted `1.064`). This is the expected `96.0 / 90.262476717` recovery and runtime-validates the corrected 1280 theoretical lookup/recovery path.
+
+A controlled 1460 diagnostic on the same sample produced `1460 Mass = 88.0 UG` and `1460 (Final) = 88.0 UG`, but `1460 F/T` returned `Theoretical UNITS and actual results UNITS are not same category.` Follow-up investigation established that both the 1460 Final and theoretical result are stored as `UG` in unit category `MASS`; a reproduced found-dependency lookup likewise resolves the 1460 Final to `UG / MASS`. The failure is therefore not explained by persisted unit metadata.
+
+A complete comparison of the F/T calculation variables identified `found` as the material persisted difference:
+
+```text
+Working 1280 F/T -> found:
+    Source   = ISE : 1280 (Final)
+    Value    = ENTRY
+    Output   = Array
+    Function = [none]
+
+Failing 1460 F/T -> found:
+    Source   = ISE : 1460 (Final)
+    Value    = FORMATTED_ENTRY
+    Output   = Processed
+    Function = AVE
+```
+
+The `theory` and `theoryElement` variables are otherwise equivalent. During the October 7 investigation, `1460 F/T -> found` was corrected in the LabWare GUI to `ENTRY / Array` while retaining its source, specific-analysis setting, calculate-when-any-rep-entered trigger, and current-test scope. Current GUI evidence confirms the corrected configuration. No shared `CALC_QC_CONC` change was made.
+
+Runtime proof of this latest correction is still pending. The ISE tests in `485928` were instantiated before the `1460 F/T -> found` correction, so a fresh request/test set is required. The first post-change proof should use the scientifically mapped QCSM036 10-uL case with historical source inputs pH `7.321`, solution volume `50 mL`, aliquot factor `1`, E0 `70.6 mV`, EF- `22.8 mV`, and concentration `1.76 ppm`. Expected results are `1460 Mass = 88 UG`, `1460 (Final) = 88 UG`, and `1460 F/T ~= 0.974934` against fresh theory `90.262476717 UG`.
+
+Additional October 7 workflow evidence: fresh `QCSM035-0006` (`66052`-`66055`) and `QCSM036-0004` (`66058`-`66061`) were created and activated successfully, and the normal OSHA_ID-110 batch QC-scan workflow accepted both four-sample QCSM sets together. Batch `OSHA_ID-110-261007-1` therefore contained 15 samples (4 QCSM035 + 4 QCSM036 + 7 field samples), resolving the earlier coverage question in favor of both QCSM types being valid in the same configured batch workflow.

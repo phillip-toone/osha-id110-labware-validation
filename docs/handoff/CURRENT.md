@@ -1,3 +1,75 @@
+# 2026-10-07 Update — 485928 Proves 1280 Recovery; Additional 1460 F/T Input Defect Corrected; Fresh Runtime Run Required
+
+**Status:** Request `485928` successfully validated the corrected QCSM theoretical-target/alias path and demonstrated correct `1280 F/T` recovery at runtime. During the same run, `1460 F/T` exposed an additional calculation-variable configuration defect. The `1460 F/T -> found` variable has now been corrected to match the working 1280 array contract, but the ISE tests in `485928` were instantiated before that correction. A new fresh request/run is therefore required to prove the latest 1460 correction at runtime before continuing the full regression.
+
+## What 485928 established
+
+- An unrelated Sample Reception blocker encountered immediately after import was confirmed by another DEV developer to be caused by a variable error in newly deployed reception logic. The DEV logic was corrected, after which all seven `485928` samples were received successfully. This was not an OSHA ID-110 configuration defect.
+- Fresh QCSM sets were created after the October 6 target/alias corrections:
+  - `QCSM035-0006`, samples `66052`-`66055`, spikes `10 / 20 / 40 / 0 uL`.
+  - `QCSM036-0004`, samples `66058`-`66061`, spikes `10 / 20 / 40 / 0 uL`.
+- Both QCSM035 and QCSM036 were accepted together through the normal **Scan Quality Control Samples to Add to Batch** workflow. Batch `OSHA_ID-110-261007-1` therefore contained 15 samples: 4 QCSM035 + 4 QCSM036 + 7 field samples.
+- Fresh theoretical `INGREDIENTS : Concentration` for the 10-uL QCSM was verified as `90.262476717 UG`, with `ATTRIBUTE_1 = Fluoride (F)` and unit category `MASS`. This runtime-proves propagation of the corrected `LAB_SOL00265.X_QCSM_TARGET = Fluoride (F)` target into newly created QCSMs.
+- Using historical source measurements, sample `66052` produced `1280 Mass = 96.0 UG`, `1280 (Final) = 96.0 UG`, and `1280 F/T = 1.0635648776` (formatted `1.064`). This runtime-proves the corrected 1280 recovery path.
+
+## Additional 1460 F/T defect discovered and corrected
+
+A controlled 1460 diagnostic on sample `66052` produced `1460 Mass = 88.0 UG` and `1460 (Final) = 88.0 UG`, but `1460 F/T` returned:
+
+```text
+Theoretical UNITS and actual results UNITS are not same category.
+```
+
+Investigation verified that both the 1460 Final and theoretical result are actually stored as `UG / MASS`; the error is therefore not explained by incompatible stored units. A persisted calculation-variable comparison identified the material difference between the working 1280 and failing 1460 wrappers:
+
+```text
+1280 F/T -> found:
+    Source   = ISE : 1280 (Final)
+    Value    = ENTRY
+    Output   = Array
+    Function = [none]
+
+1460 F/T -> found, failing configuration:
+    Source   = ISE : 1460 (Final)
+    Value    = FORMATTED_ENTRY
+    Output   = Processed
+    Function = AVE
+```
+
+During the investigation, `1460 F/T -> found` was corrected in the LabWare GUI to:
+
+```text
+Source   = ISE : 1460 (Final)
+Value    = ENTRY
+Output   = Array
+Function = [not applicable]
+```
+
+The existing source, specific-analysis setting, calculate-when-any-rep-entered trigger, and current-test scope were retained. Current GUI evidence confirms this corrected state. No change was made to shared `CALC_QC_CONC`.
+
+## Why another fresh request is required
+
+The ISE tests in `485928` existed before the `1460 F/T -> found` correction was applied. LabWare tests remain associated with the analysis/configuration version under which they were instantiated, as previously demonstrated with `485927`. Therefore `485928` is valuable post-fix diagnostic evidence, but it cannot cleanly prove the correction made during that run.
+
+Use the following interpretation going forward:
+
+| Request | Role | Disposition |
+| --- | --- | --- |
+| `485926` | Earlier baseline validation | Preserve as baseline evidence |
+| `485927` | Recovery/precision configuration-discovery run | Preserve as pre-fix diagnostic evidence |
+| `485928` | Fresh post-target-fix regression; proves theoretical target + 1280 recovery; exposes 1460 `found` defect | Preserve as diagnostic/runtime evidence; do not use to prove the later 1460 `found` correction |
+| next fresh request | Post-1460-`found` correction regression | Create fresh tests and prove 1460 recovery before completing full regression |
+
+## Immediate next action
+
+Create a fresh XML request based on the same `HD-2026-12-02` reference case using the next controlled request number. After import/reception, create fresh QCSMs/tests under the corrected analysis configuration and first prove the scientifically mapped 1460 10-uL case. Expected source inputs are pH `7.321`, solution volume `50 mL`, aliquot factor `1`, E0 `70.6 mV`, EF- `22.8 mV`, and concentration `1.76 ppm`; expected calculated values are `1460 Mass = 88 UG`, `1460 (Final) = 88 UG`, and `1460 F/T ~= 0.974934` using fresh theory `90.262476717 UG`.
+
+If that passes, continue the remaining nonzero/zero-spike QCSMs, batch precision, field-sample regression, and review/reviewer workflow. If it still fails, instrument runtime unit/category variables inside `CALC_QC_CONC` rather than changing shared logic speculatively.
+
+Full October 7 investigation evidence should be preserved under `docs/handoff/investigations/`, and the detailed finding is updated in `docs/findings/2026-10-06-qc-recovery-and-precision-investigation.md`.
+
+---
+
 # 2026-10-06 Update — QCSM Recovery/Precision Defects Identified and Corrected; 485928 Is Next
 
 **Status:** Request `485927` is being closed as a diagnostic/configuration-discovery run. It exposed two remaining OSHA ID-110 QCSM configuration defects. The configuration corrections have been implemented and verified at the configuration level, but they have **not yet been validated by a fresh runtime regression**. Because LabWare samples/tests remain linked to the analysis version that existed when they were created, `485927` is not suitable for validating the corrected analysis version. The next validation run will therefore be a fresh request, `485928`, based on `HD-2026-12-02`.
