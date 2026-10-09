@@ -1,3 +1,13 @@
+# 2026-10-09 Friday Afternoon Update — Post-demo DEV Configuration Checkpoint
+
+**Status:** Post-demo configuration changes DEMO-01 through DEMO-11 are substantially saved or reviewed in LabWare DEV; **no consolidated post-demo fresh-batch runtime validation has occurred**. Do not treat this as completion of Tyler's acceptance criteria. See `docs/handoff/2026-10-09-friday-development-checkpoint.md` for detailed observations, caveats, and the next-session plan; see `docs/actions/2026-10-08-ise-demo-followup.md` for the updated checklist. Jira: `OSHA_LABS-3609`.
+
+**Key results:** Batch template: Pipettor Used, slope with `MV_DEC` and -60/-54 limits, beginning/ending °F temperatures, MCE Filter Lot removed. ISE: dilution-factor renames, both concentration units changed to `MG_L`, chlorine components removed from shared ISE main list, QCSM overrides reportedly saved but not yet independently re-read. Existing 1280/1460 Final sample-type branches inspected and retained. `CALC_QC_CONC` category-error branch identified, but F/T recurrence remains unexplained. Theoretical fluoride for sample 66077 is `90.262476717 UG`; its ISE test 74471 exists with no current RESULT rows. Tyler's second-pipettor and HF/F- decisions remain open; unrelated-method impact of shared ISE chlorine removal is untested.
+
+**Restart:** First inspect persisted `OSHA_ID-110_QCSM` component-variation overrides and visibility, then confirm any outstanding scientific decisions or document as pending. After baseline review, conduct one consolidated fresh regression with correctly mapped QCSM035 and QCSM036. Preserve historical 485928/485929/485930 evidence. Do not change shared calculations without cause.
+
+---
+
 # 2026-10-09 Update — October 8 ISE Demo Follow-up Actions Logged
 
 **Status:** Tyler Erickson's October 8 "Notes from ISE demo" email has been captured as **14 open follow-up actions** (five OSHA ID-110 batch-template items, six ISE analysis/variation items, and three Tyler-owned follow-ups). See `docs/actions/2026-10-08-ise-demo-followup.md` for owners, original requests, evidence pointers, and proposed acceptance criteria. Tracking remains under `OSHA_LABS-3609`. This is an **action-intake/documentation update**, not confirmation that any of the 14 changes has been implemented.
