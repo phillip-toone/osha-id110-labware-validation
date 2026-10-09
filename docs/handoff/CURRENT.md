@@ -1,3 +1,13 @@
+# 2026-10-09 Update — October 8 ISE Demo Follow-up Actions Logged
+
+**Status:** Tyler Erickson's October 8 "Notes from ISE demo" email has been captured as **14 open follow-up actions** (five OSHA ID-110 batch-template items, six ISE analysis/variation items, and three Tyler-owned follow-ups). See `docs/actions/2026-10-08-ise-demo-followup.md` for owners, original requests, evidence pointers, and proposed acceptance criteria. Tracking remains under `OSHA_LABS-3609`. This is an **action-intake/documentation update**, not confirmation that any of the 14 changes has been implemented.
+
+**Validation context:** Request `485929` was imported/received, fresh QCSM035-0007 and QCSM036-0005 sets were prepared and activated, and a 15-sample batch was assembled. On QCSM035 sample `66077`, `1280 Mass = 96.0 ug` and `1280 (Final) = 96.0000`, but `1280 F/T` again returned `Theoretical UNITS and actual results UNITS are not same category.` A cross-analyte 1460 diagnostic on that same QCSM035 sample yielded `1460 Mass = 88.0 ug` and `1460 (Final) = 88.0000` with the same F/T error; this **does not** establish the outcome on scientifically mapped QCSM036 sample `66081`. The diagnostic 1460 EF- displayed `22.0 mV`, differing from historical `22.8 mV`. Preserve these observations without claiming a root cause. Existing Final sample-type branches should be reviewed and validated before further edits.
+
+**Demo detour:** Request `485930` was imported for an October 7 demonstration; the supplied Sample Reception screenshot showed **six** unreceived field samples (`66085`–`66090`), not the usual seven. Subsequent receipt or demo completion is not established by this handoff. Preserve this as a screenshot-level observation, not a confirmed import defect.
+
+---
+
 # 2026-10-07 Update — 485928 Proves 1280 Recovery; Additional 1460 F/T Input Defect Corrected; Fresh Runtime Run Required
 
 **Status:** Request `485928` successfully validated the corrected QCSM theoretical-target/alias path and demonstrated correct `1280 F/T` recovery at runtime. During the same run, `1460 F/T` exposed an additional calculation-variable configuration defect. The `1460 F/T -> found` variable has now been corrected to match the working 1280 array contract, but the ISE tests in `485928` were instantiated before that correction. A new fresh request/run is therefore required to prove the latest 1460 correction at runtime before continuing the full regression.
