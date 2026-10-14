@@ -18,6 +18,21 @@ The fourteen items below transcribe the email's five batch-template requests, si
 | DEMO-04 | [~] Saved / config verified | "Ending temperature (F)" — ADD | [EMAIL] | Batch component accepts/persists an ending temperature in degrees Fahrenheit and displays the intended units. |
 | DEMO-05 | [~] Removed / config verified | "MCE Filter Lot (for wiping cassettes)" — REMOVE | [EMAIL]; [CURRENT] existing optional field | Field is absent from new OSHA ID-110 batch template/results while unrelated analyses remain unaffected; preserve historical batch evidence. |
 
+## October 14 fresh-batch configuration observation — DEMO-01 through DEMO-04
+
+**Evidence:** Operator screenshot of the batch-level **Results** grid in `OSHA_LIMS_DEV`, batch `OSHA_ID-110-261014-1`, October 14, 2026. **Classification:** `OBSERVED_UI`; laboratory requirements and enforcement behavior remain `UNRESOLVED`. This observation supplements, but does not close, DEMO-01 through DEMO-04.
+
+| Action | Batch component | Reportable (UI) | Opt. (UI) | Observed result status | Open confirmation |
+| --- | --- | --- | --- | --- | --- |
+| DEMO-01 | Pipettor Used | No | No | Not Entered | Confirm whether mandatory, whether one or two pipettor fields are needed, and intended reportability. |
+| DEMO-02 | Slope | Yes | No | Entered: `-59.0 mV/dec`; UI limits `-60` to `-54` | Confirm whether reportable and mandatory, and whether limits are enforced. |
+| DEMO-03 | Beginning Temperature | Yes | No | Not Entered; `°F` displayed | Confirm whether reportable and mandatory. |
+| DEMO-04 | Ending Temperature | Yes | No | Not Entered; `°F` displayed | Confirm whether reportable and mandatory. |
+
+**Evidence boundary:** `Opt. = No` is the displayed configuration flag, **not** proof that Save, processing, or authorization enforces entry. `Reportable = Yes` is likewise not proof of appearance on an issued report. The operator reported **File > Save** while these three fields were blank; the screenshot shows their `Not Entered` status, but does not by itself prove successful authorization or persistence after reopening. The entered slope is a historical-reference replay value, not a newly measured instrument slope.
+
+**Follow-up / acceptance evidence needed:** Obtain laboratory/method-owner decisions for each field's intended `Reportable` and `Opt.` flags; inspect saved component configuration; test entry, save/reopen, and appropriate completion gates in DEV without authorizing incomplete analytical data; inspect a generated report or approved preview for reportability. Preserve observed behavior and screenshots. **Do not change flags or shared calculations before requirements are confirmed.**
+
 ## B. ISE analysis and variations — Phillip
 
 | ID | Status | Original request | Evidence | Proposed acceptance criterion |
@@ -41,6 +56,76 @@ The fourteen items below transcribe the email's five batch-template requests, si
 
 See `docs/handoff/2026-10-09-friday-development-checkpoint.md` for detailed observed values, evidence boundaries, risks, and restart steps. **[~] means configuration work performed/reviewed, not acceptance complete.** No DEMO-01 through DEMO-11 item has passed the consolidated fresh-batch post-demo regression. Tyler-owned DEMO-12 through DEMO-14 remain open with no completion evidence.
 
+## October 14, 2026 — Stakeholder clarification requested
+
+**Status:** Awaiting stakeholder response.
+
+On October 14, 2026, at 3:39 PM, Phillip sent a follow-up email
+(RE: Notes from ISE demo) to Tyler Erickson, copying Hanh Dinh,
+Jan Ottowicz, and John Yost.
+
+The email requests confirmation of:
+
+- Whether Pipettor Used, Slope, Beginning Temperature, and Ending
+  Temperature should be reportable or non-reportable.
+- Whether each of these four components should be required or optional.
+- Whether one or two Pipettor Used fields are needed.
+
+**Related actions:** DEMO-01, DEMO-02, DEMO-03, DEMO-04.
+
+**Current observed configuration:** In DEV batch
+`OSHA_ID-110-261014-1`, Slope, Beginning Temperature, and Ending
+Temperature display Reportable = Yes; Pipettor Used displays
+Reportable = No. All four display Opt. = No.
+
+These are observed settings, not confirmed laboratory requirements.
+The runtime enforcement of Opt. = No has not been established.
+
+**Next:** Record stakeholder decisions and update the applicable
+configuration and validation criteria. Do not change these settings
+solely on the basis of the current observations.
+
+## October 14, 2026 — F/T runtime investigation
+
+**Status:** Partial runtime evidence; F/T acceptance remains open.
+
+**Environment:** `OSHA_LIMS_DEV`
+**Request:** `485932`
+**Batch:** `OSHA_ID-110-261014-2`
+**Diagnostic sample:** `66260` (QCSM035)
+**ISE test:** `74908`, version 1, variation `OSHA_ID-110_QCSM`
+
+Read-only SQL confirmed that the theoretical fluoride ingredient
+result was `90.262476717 UG` (`MASS`). Both measured Final results
+were also stored in `UG` (`MASS`): `1280 (Final) = 451` and
+`1460 (Final) = 500`.
+
+Both F/T calculations initially returned:
+
+`Theoretical UNITS and actual results UNITS are not same category.`
+
+The saved calculation-variable mappings were verified. After
+subsequent batch activity, both F/T results became numeric:
+`1280 F/T = 4.997` and `1460 F/T = 5.5394004041`.
+
+**Evidence boundary:** The successful recalculation trigger and
+original error mechanism remain unconfirmed. These values came from
+diagnostic analytical inputs and do not establish acceptable QC
+recovery. The 1460 result was obtained on QCSM035 sample `66260`,
+not the scientifically mapped QCSM036 sample `66261`.
+
+**Remaining validation:** Verify calculation execution order,
+saved concentration/Final unit configuration, correct historical
+analytical inputs, 1460 recovery on QCSM036, QCSM precision,
+and field-sample results.
+
+**Configuration control:** Do not modify shared `CALC_QC_CONC`
+without evidence. Preserve the initial errors and subsequent
+numeric results as separate observations.
+
+**Detailed evidence:**
+`docs/handoff/2026-10-14-id110-ft-validation-checkpoint.md`
+
 ## Validation dependencies and execution notes
 
 - Prioritize documenting baseline configuration and obtaining scientific decisions (especially slope limits, dilution semantics, and HF versus F⁻) before changing calculations.
@@ -53,3 +138,4 @@ See `docs/handoff/2026-10-09-friday-development-checkpoint.md` for detailed obse
 
 - 2026-10-09: Captured 14 action items from Tyler's October 8 email; initial intake only.
 - 2026-10-09 (Friday checkpoint): Updated Phillip-owned statuses from demonstrated GUI and SQL configuration evidence; runtime validation and outstanding scientific decisions remain open. See Friday checkpoint handoff.
+- 2026-10-14: Added fresh-batch `OSHA_ID-110-261014-1` UI evidence for DEMO-01 through DEMO-04: reportability and optional flags, entry statuses, and unresolved requirements/enforcement questions. No acceptance status changed.
