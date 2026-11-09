@@ -2,7 +2,7 @@
 
 **Initiated:** 2026-11-09
 **Environment:** OSHA_LIMS_DEV (Oracle)
-**Status:** PARTIAL DEV IMPLEMENTATION — TWO QCSM FINAL OPTIONAL FLAGS CHANGED AND GUI-VERIFIED; REGRESSION NOT STARTED
+**Status:** PARTIAL DEV IMPLEMENTATION — TWO QCSM FINAL OPTIONAL FLAGS CHANGED AND GUI-VERIFIED; SEVEN-COMPONENT QCSM GUI INVENTORY COMPLETED; REGRESSION NOT STARTED
 **Owner:** Project Director and LabWare operator
 **Source directive:** Tyler Erickson, email 2026-11-09
 
@@ -31,14 +31,14 @@ Implement Tyler's component and variation configuration instructions exactly, wh
 | Gate | Requirement | Status |
 |---|---|---|
 | 0 | Preserve Specialist Director Brief and Investigation Report | Pending repository confirmation |
-| 1 | Capture verified current GUI/SQL baseline and identify impacted variations | Partial: QCSM Final GUI baseline confirmed; broader inventory/SQL verification pending |
-| 2 | Produce component-by-variation change matrix; resolve conditional decisions | Pending for remaining components and variations |
+| 1 | Capture verified current GUI/SQL baseline and identify impacted variations | Partial: all seven existing QCSM variation components visually inspected; broader variation inventory and SQL verification pending |
+| 2 | Produce component-by-variation change matrix; resolve conditional decisions | QCSM seven-component current-state matrix captured below; target decisions and broader variations pending |
 | 3 | Review and explicitly approve a bounded GUI change set | Two QCSM Final Optional changes approved during interactive session; broader approval pending |
 | 4 | Apply one approved change set in DEV; log each before/after setting | Two QCSM Final Optional changes applied |
 | 5 | Verify applied configuration via GUI and read-only SQL | GUI reopen verification complete for both; SQL verification pending |
 | 6 | Create fresh test and inspect pre-entry RESULT records/UNITS | Not started |
 | 7 | Observe automatic 1280 and 1460 F/T independently | Not started |
-| 8 | Document outcomes and commit evidence | This checkpoint prepared; repository commit pending |
+| 8 | Document outcomes and commit evidence | Initial implementation log committed as `fc05794`; this inventory update pending commit |
 
 **Ordering constraint:** Do not change parent `Displayed` or `Reportable` defaults before verifying explicit variation coverage for every affected workflow; otherwise applicable fields may disappear. Do not modify shared `CALC_QC_CONC`, stock records, or RESULT rows as part of this configuration exercise.
 
@@ -76,6 +76,57 @@ Implement Tyler's component and variation configuration instructions exactly, wh
 - The remaining QCSM components, other variations, and Tyler's parent-level defaults are **not yet implemented**. Do not treat this as completion of Tyler's directive.
 
 **Next controlled checkpoint:** Preserve this updated log in Git. Then inspect remaining QCSM variation-component applicability and Optional/Displayed/Reportable settings, resolve requirements, and plan subsequent changes before creating a fresh regression test.
+
+## 2026-11-09 — QCSM variation inventory and calculation dependency checkpoint
+
+**Evidence:** Operator-provided LabWare DEV GUI screenshots and calculation text in the Director conversation. The seven-row inventory below is the **current observed state**, incorporating the two previously saved and reopened Final-component edits; it is **not** an approved end-state matrix. No additional configuration edits were reported during this inspection.
+
+### Existing `OSHA_ID-110_QCSM` variation components
+
+| Component | Optional | Displayed | Reportable | Units | Other observed properties / status |
+|---|---|---|---|---|---|
+| `Prep Volume` | T | F | F | `ML` | 1 place; rounding None; Blanks Override F; applicability/mandatory status unresolved |
+| `1280 Concentration` | T | T | F | `PPM` | 1 place; rounding None; Blanks Override T; numeric/manual input |
+| `1280 (Final)` | **F** | T | T | `UG` | 4 places; rounding Decimal Places w/0.5 Up; Blanks Override T; change ISE-QCSM-001 verified |
+| `1280 F/T` | T | T | F | `NONE` | 3 places; rounding Decimal Places w/Odd Up; Blanks Override T |
+| `1460 Concentration` | T | T | F | `PPM` | 1 place; rounding None; Blanks Override T; numeric/manual input |
+| `1460 (Final)` | **F** | T | T | `UG` | 4 places; rounding Decimal Places w/0.5 Up; Blanks Override T; change ISE-QCSM-002 verified |
+| `1460 F/T` | T | T | F | `NONE` | 1 place; rounding None; Blanks Override T |
+
+**Important:** The two F/T components differ in decimal places and rounding. No formatting changes are authorized. The parent `1280 Concentration` component was observed as Numeric with `Units=MG_L`, while the QCSM variation uses `PPM`; this distinction was observed, not investigated or changed.
+
+### Verified calculation dependencies
+
+- Parent `1280 Mass`: Calculated, `Units=UG`, `Auto-Calculate=True`, parent Optional T / Displayed T / Reportable F. Equation: `RETURN solutionVolume*aliquotFactor*ppmFluoride`. Inputs: `1280 Solution Volume`, `1280 Dilution Factor`, `1280 Concentration`.
+- Parent `1460 Mass`: Calculated, `Units=UG`, `Auto-Calculate=True`, parent Optional T / Displayed T / Reportable F. Same equation; inputs: `1460 Solution Volume`, `1460 Dilution Factor`, `1460 Concentration`.
+- Parent `1280 (Final)` QCSM branch returns fluoride mass, invoking `SetOrCreateResult(..., "UG", ...)`; its non-QCSM branch divides mass by Air Volume. The previously inspected `1280 (Final)` calculation does not directly reference `Prep Volume`.
+- `1280 Concentration` is a Numeric component rather than a calculated component. No direct `Prep Volume` dependency was found in the inspected 1280 concentration/mass/Final chain. This **does not establish** that Prep Volume is unnecessary in preparation or other workflows.
+- The November diagnostic input example `50 mL * 1 * 9.02 ppm = 451` reproduces the observed 1280 Mass numeric value; it is diagnostic evidence, not a validated analytical measurement.
+
+### Six absent explicit variation components requiring applicability review
+
+The seven-row QCSM variation list **does not explicitly include** these components, although the inspected calculations reference them:
+
+| Candidate component | Role | Decision status |
+|---|---|---|
+| `1280 Solution Volume` | 1280 Mass input | Evaluate explicit inclusion and required/display settings |
+| `1280 Dilution Factor` | 1280 Mass input | Evaluate explicit inclusion and required/display settings |
+| `1280 Mass` | Calculated intermediate feeding 1280 Final | Evaluate explicit inclusion and required/display settings |
+| `1460 Solution Volume` | 1460 Mass input | Evaluate explicit inclusion and required/display settings |
+| `1460 Dilution Factor` | 1460 Mass input | Evaluate explicit inclusion and required/display settings |
+| `1460 Mass` | Calculated intermediate feeding 1460 Final | Evaluate explicit inclusion and required/display settings |
+
+**Do not infer** from missing explicit variation rows that these components are unavailable at runtime: historical Result Entry displayed additional inherited parent components. Conversely, changing parent `Displayed` to F without first resolving variation coverage could remove necessary inputs.
+
+### Open decisions / next gate
+
+1. Establish whether `Prep Volume` is required for QCSM preparation or recordkeeping; its absence from the inspected calculations is insufficient to decide.
+2. Establish whether both 1280 and 1460 analyte chains must be mandatory for every QCSM, or whether analyte-specific applicability varies by stock/test.
+3. Determine intended F/T mandatory and reportable settings from approved method/workflow evidence; Tyler said F/T is *typically* reportable, not that all F/T rows must be changed indiscriminately.
+4. Confirm the six candidate components' variation applicability, required/display flags, and any inheritance behavior before changing parent defaults.
+5. Preserve the remaining ISE variations' workflows before broad parent changes. No fresh post-change RESULT-row or automatic F/T regression has been performed.
+
+**Change count at this checkpoint:** exactly two confirmed DEV configuration edits (ISE-QCSM-001 and -002), both Optional T to F on the respective Final variation components. All other inspections are read-only GUI observations.
 
 ## Regression boundaries
 
