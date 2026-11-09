@@ -128,6 +128,37 @@ The seven-row QCSM variation list **does not explicitly include** these componen
 
 **Change count at this checkpoint:** exactly two confirmed DEV configuration edits (ISE-QCSM-001 and -002), both Optional T to F on the respective Final variation components. All other inspections are read-only GUI observations.
 
+## 2026-11-09 — Director decision checkpoint: inherited configuration and versioned-test regression
+
+**Decision status:** Approved investigation sequence; **no additional LabWare configuration changes authorized** at this checkpoint. These decisions follow operator clarification of test versioning and the inherited/adapted analysis design.
+
+### DEC-ISE-001 — Defer adding six QCSM variation components
+
+- **Decision:** Do not add `1280 Solution Volume`, `1280 Dilution Factor`, `1280 Mass`, `1460 Solution Volume`, `1460 Dilution Factor`, or `1460 Mass` to `OSHA_ID-110_QCSM` yet. Defer, rather than reject, the proposal.
+- **Reason:** The ISE analysis was adopted/inherited/copied from another analysis. Earlier QCSM Result Entry displayed and used some components absent from the seven explicit variation rows; the 1280 mass calculation succeeded. Their absence from the variation list alone does not demonstrate a defect or prove that explicit addition is necessary. The original design and parent/variation behavior need investigation before restructuring it.
+- **Potential impact of later changes:** Tyler's parent-level `Displayed=F` instruction could alter inherited visibility. Do not apply parent-level defaults broadly until all affected variations and dependencies are accounted for.
+- **Reconsider when:** The isolated post-change regression is complete and inheritance/applicability evidence supports a specific change.
+
+### DEC-ISE-002 — Isolate Tyler's Final-result optionality hypothesis
+
+- **Decision:** Pause further configuration edits and test only the two already implemented and verified variation-level changes: `1280 (Final)` Optional T → F (ISE-QCSM-001) and `1460 (Final)` Optional T → F (ISE-QCSM-002). Both retain Displayed T, Reportable T, Units `UG`.
+- **Hypothesis, not established cause:** Marking Final results non-optional may cause their `RESULT` rows to exist at test creation and allow the automatic F/T unit lookup to succeed.
+- **Alternative/unresolved mechanism:** Manual entry may trigger chained calculations before a newly calculated Final result and its units become available to the F/T routine. The source analysis may have used instrument-file parsing with different calculation timing. These explanations are not mutually exclusive.
+- **Do not change:** Calculation code, Auto-Calculate flags, units, other component optionality, stock records, or parent defaults during this isolated test.
+
+### DEC-ISE-003 — Fresh samples and tests are mandatory for valid comparison
+
+- **Operator-confirmed LabWare behavior:** Analysis changes are versioned; samples with tests assigned **before** the change do **not** reflect the revised configuration. New samples must be created and new ISE tests assigned **after** the changes to evaluate their effect. Do not treat an unused old QCSM test as a valid post-change test.
+- **Historical control:** DEV sample `66454` in the November 6 run exhibited the automatic 1280 F/T unit-category error before these changes. Preserve the committed failure record; do not save the historical diagnostic entries.
+- **Next experiment:** Create a fresh disposable DEV QCSM sample/test using the revised configuration. Record sample number, test number, batch, creation/assignment time, and effective analysis version. Before entering analytical values, use **read-only SQL** to inspect whether `1280 (Final)` and `1460 (Final)` RESULT rows exist and what `UNITS` contain. Then enter documented DEV-only diagnostic inputs, observe automatic F/T without double-click or Batch Calculate, and record exact results/errors. Do not save diagnostic result entries; verify the reset after closing without saving.
+- **Interpretation:** A successful calculation tests the two-setting hypothesis under those conditions, not full compliance with Tyler's broader configuration standard. A failure requires further investigation before adding more variables.
+
+### DEC-ISE-004 — Preserve a reversible, evidence-based implementation trail
+
+- **Baseline:** The seven-row QCSM variation matrix and calculation dependencies above are the pre-regression reference. Two Final Optional edits are the **only** confirmed saved changes to date.
+- **Rollback reference (if later approved):** Restore `Optional=T` separately on `1280 (Final)` and `1460 (Final)` in `OSHA_ID-110_QCSM`; retain all other original properties. Reopen to verify. Do not perform rollback now.
+- **Documentation gate:** Record the new test identifiers, pre-entry SQL evidence, observed automatic calculation behavior, and whether entries were discarded before declaring the hypothesis supported or refuted. Keep proposed additions and broader parent-level corrections explicitly pending.
+
 ## Regression boundaries
 
 - Existing November diagnostic sample `66454` is historical failure evidence, not a post-change acceptance sample. Do not save its diagnostic results.
